@@ -3,6 +3,9 @@
     background-color: white;
 }
 
+.main{
+    height: 80vh;
+}
 .fa-solid{
     color: #fe424d;
 }
@@ -99,4 +102,15 @@ img.card-img-top{
 .edit-btn{
     background-color: #fe424d !important;
     border: none !important;
+}
+
+/* show-page */
+.show-img{
+    height: 30vh;
+    width: auto;
+}
+
+.btns {
+    display: flex;
+    flex-direction: row;
 }
