@@ -1,4 +1,5 @@
 const mongoose= require("mongoose");
+const { type } = require("../schema");
 const schema= mongoose.Schema;
 
 const listingSchema = new schema({
@@ -20,7 +21,11 @@ const listingSchema = new schema({
     location:String,
     country:String,
     price:Number,
-    
+    reviews:[{
+        type:schema.Types.ObjectId,
+        ref:"Review",
+
+    }]
 });
 
 
