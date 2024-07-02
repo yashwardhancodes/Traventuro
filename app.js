@@ -9,6 +9,8 @@ const wrapAsync=require("./utils/wrapAsync.js");
 const expressError=require("./utils/ExpressError.js");
 const {ListingSchema,ReviewSchema}=require("./schema.js");
 const Review = require("./models/review.js");
+const review = require("./models/review.js");
+const RepairDetail=require("./models/repairDetails.js");
 
 
 app.use(express.json());
@@ -148,9 +150,21 @@ app.post("/listings/:id/reviews",wrapAsync(async(req,res)=>{
 
 }));
 
-app.all("*",(req,res,next)=>{
-    next(new expressError(404,"page not found"));
-});
+
+//Delete Review Route
+
+app.delete("/listings/:id/reviews/:reviewId",
+    wrapAsync(async(req,res)=>{
+        let {id,reviewId}=req.params;
+
+        await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
+        await review.findByIdAndDelete(reviewId);
+
+        res.redirect(`/listings/${id }`);
+
+}))
+
+
 
 //middleware to handle error
 app.use((err, req, res, next) => {
