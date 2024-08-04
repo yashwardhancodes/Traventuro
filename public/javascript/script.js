@@ -19,65 +19,42 @@
 
 
   document.addEventListener('DOMContentLoaded', () => {
-    var totalAmount = 0;
-    var serialNo = 1;
+    const entryForm = document.getElementById('entryForm');
+    const serialNoField = document.getElementById('serialNo');
 
-    // Fetch existing data from the server
-    fetch('/repairDetails')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(detail => {
-                addTableRow(detail.serialNo, detail.particular, detail.rate, detail.amount);
-                totalAmount += detail.amount;
-                serialNo = detail.serialNo + 1;
-            });
-            updateTotalAmount();
-        });
+    entryForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    document.getElementById('entryForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // Prevent form submission
+        const serialNo = serialNoField.value;
+        const particular = document.getElementById('particular').value;
+        const rate = parseFloat(document.getElementById('rate').value);
+        const amount = parseFloat(document.getElementById('amount').value);
 
-        // Get input values
-        var particular = document.getElementById('particular').value;
-        var rate = parseFloat(document.getElementById('rate').value);
-        var amount = parseFloat(document.getElementById('amount').value);
-
-        // Prepare data to send to server
-        var detail = {
-            serialNo: serialNo,
-            particular: particular,
-            rate: rate,
-            amount: amount
-        };
-
-        // Post data to the server
-        fetch('/repairDetails', {
+        const response = await fetch('/repairDetails', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(detail)
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Add new row to table
-            addTableRow(data.serialNo, data.particular, data.rate, data.amount);
-
-            // Update total amount
-            totalAmount += data.amount;
-            updateTotalAmount();
-
-            // Increment serial number
-            serialNo++;
-
-            // Reset form
-            document.getElementById('entryForm').reset();
+            body: JSON.stringify({
+                serialNo,
+                particular,
+                rate,
+                amount
+            })
         });
+
+        if (response.ok) {
+            addTableRow(serialNo, particular, rate, amount);
+            serialNoField.value = parseInt(serialNoField.value) + 1;
+            entryForm.reset();
+        } else {
+            console.error('Failed to add repair detail');
+        }
     });
 
     function addTableRow(serialNo, particular, rate, amount) {
-        var tableBody = document.getElementById('tableBody');
-        var newRow = document.createElement('tr');
+        const tableBody = document.getElementById('tableBody');
+        const newRow = document.createElement('tr');
 
         newRow.innerHTML = `
             <td>${serialNo}</td>
@@ -86,11 +63,19 @@
             <td>${amount.toFixed(2)}</td>
         `;
 
-        // Insert new row before the total row
-        tableBody.insertBefore(newRow, tableBody.lastElementChild);
+        tableBody.insertBefore(newRow, tableBody.lastElementChild.previousSibling);
+        updateTotalAmount();
     }
 
     function updateTotalAmount() {
+        const tableBody = document.getElementById('tableBody');
+        let totalAmount = 0;
+        tableBody.querySelectorAll('tr').forEach((row, index) => {
+            if (index < tableBody.rows.length - 1) {
+                const amount = parseFloat(row.cells[3].innerText);
+                totalAmount += amount;
+            }
+        });
         document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
     }
 });

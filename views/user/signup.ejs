@@ -1,0 +1,55 @@
+<% layout("/layouts/boilerplate") %>
+
+<body>
+    <div style="height: 36rem;">
+    
+<div class="row mt-3 offset-3">
+    <h1>Sign Up on Traventuro</h1>
+    <div class="col-8 ">
+  <form action="/signup" method="POST" novalidate class="needs-validation">
+
+    <div class="mb-3">
+        <label for="username" class="form-lable">Username</label>
+        <input name="username"
+        type="text"
+        id="userame"
+         class="form-control" required/>
+        <div class="valid-feedback">Looks Good !</div>
+
+
+        </div>
+  
+        <br>
+
+        <div class="mb-3">
+            <label for="email" class="form-lable">Email</label>
+            <input name="email"
+            type="email"
+            id="email"
+             class="form-control" required/>
+    
+            </div>
+      
+            <br>
+
+            <div class="mb-3">
+                <label for="password" class="form-lable">Password</label>
+                <input name="password"
+                type="password"
+                id="password"
+                 class="form-control" required/>
+        
+                </div>
+          
+                <br>
+
+                <button class="btn btn-success">SignUp</button>
+  </form>
+
+ </div>
+ </div>
+</div>
+</body>
+ 
+
+
